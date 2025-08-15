@@ -64,7 +64,7 @@
   
   
   
-  #Histrogam of Nine-Dimensional Score
+  # Histrogam of Nine-Dimensional Score
   # packages
   install.packages("tidyverse")
   install.packages("janitor")
@@ -160,7 +160,7 @@
   
   
   
-  #Model type of 52 studies
+  # Model type of 52 studies
   library(ggplot2)
   library(tidyr)
   library(dplyr)
