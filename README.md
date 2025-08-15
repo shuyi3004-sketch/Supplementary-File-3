@@ -1,0 +1,215 @@
+
+  # Histrogam of Total Score
+  data <- c(13,
+            15,
+            16,
+            17,
+            12,
+            20,
+            18,
+            17,
+            14,
+            16,
+            15,
+            16,
+            17,
+            19,
+            18,
+            13,
+            18,
+            17,
+            12,
+            17,
+            15,
+            18,
+            17,
+            13,
+            17,
+            17,
+            16,
+            19,
+            17,
+            19,
+            18,
+            18,
+            16,
+            13,
+            19,
+            10,
+            18,
+            19,
+            15,
+            12,
+            20,
+            17,
+            16,
+            17,
+            17,
+            15,
+            16,
+            17,
+            12,
+            15,
+            19,
+            18)
+ 
+  hist(data,
+       main = "Histogram of total score",
+       xlab = "Scores",
+       ylab = "Number of Studies",
+       col = "lightblue",     
+       border = "black")    
+  
+  
+  
+  
+  
+  #Histrogam of Nine-Dimensional Score
+  # packages
+  install.packages("tidyverse")
+  install.packages("janitor")
+  install.packages("pals")
+  install.packages("ggplot2") 
+  library(tidyverse)
+  library(janitor)
+  library(pals)
+  
+  # data
+  raw_scores <- list(
+    `Setting and Population` = c(0,2,1,2,2,2,2,2,2,1,2,0,2,1,2,1,1,2,2,2,1,2,1,2,2,2,2,1,2,2,1,2,1,2,2,0,1,2,1,1,2,2,1,1,2,2,2,1,1,1,2,0),
+    `Intervention and Comparator` = c(4,6,5,6,3,6,5,5,4,6,4,6,6,6,6,4,6,6,3,6,5,6,6,4,4,5,4,6,5,6,6,5,6,4,5,3,5,5,4,3,6,4,4,6,5,5,4,6,3,4,6,6),
+    `Model Structure` = c(2,1,2,2,1,2,2,2,1,1,2,1,1,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2,1,2,1,2,2,2,1,2,2,1,1,2,1,2,2,2,2,2,2),
+    `Modelling Method` = c(1,0,1,2,1,2,1,2,1,0,2,2,0,2,1,1,1,1,0,0,0,2,1,1,2,1,1,2,1,2,2,2,0,0,2,0,2,1,1,0,2,2,2,1,1,1,0,1,1,1,1,2),
+    `Parameter Description` = c(1,1,2,0,0,2,2,1,0,2,0,1,2,2,2,0,2,1,0,1,1,2,1,0,2,1,1,2,1,2,2,1,2,1,2,2,2,2,2,2,2,1,2,1,2,1,1,2,0,2,2,2),
+    `Sensitivities and Uncertainties` = c(1,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,1,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2),
+    `Results and Limitations` = c(2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2),
+    `Funding and Conflict of Interest` = c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+    `Modeling Codes or Supplemental Materials` = c(1,0,1,1,1,1,1,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,0,1,1,1,1,0,1,1,1,0,1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1)
+  )
+  
+  # 
+  score_max <- c(2, 6, 2, 2, 2, 2, 2, 1, 1)
+  
+  # 
+  df <- map2_dfr(raw_scores, score_max, ~ tibble(score = .x, max = .y), .id = "section") %>%
+    mutate(score_label = paste0(score, "/", max))
+  
+  # 
+  colors <- c(
+    # 
+    "#fddede", "#fabbbb",  
+    NA,
+    "#cce5e5", "#8fc1c1", "#398585",  
+    NA,
+    # 
+    "#d6e6fa", "#a8c8f0", "#78aee8", "#4a91dd"
+  )
+  
+  df <- df %>%
+    mutate(section = factor(section, levels = names(raw_scores)),
+           score_label = factor(score_label, levels = c("0/1","1/1", " ",
+                                                        "0/2","1/2","2/2", "  ",
+                                                        "3/6","4/6","5/6","6/6")))
+  
+  ggplot(df, aes(x = section, fill = score_label)) +
+    geom_histogram(stat = "count", position = position_dodge2(preserve = "single"), width = 0.6) +
+    theme_bw() +
+    ylab("Number of Studies") +
+    xlab("Quality Score Section") +
+    ggtitle("Distribution of Scores") +http://127.0.0.1:30495/graphics/2cb62f35-7eb2-4c9e-9053-3338de04207e.png
+    scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+    scale_fill_manual(
+      values = colors,
+      breaks = levels(df$score_label),
+      labels = levels(df$score_label),
+      na.translate = FALSE,
+      drop = FALSE,
+      name = "Score / Max Score\n"
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 30, hjust = 1),
+      legend.title = element_text(face = "bold")
+    )
+  
+  
+  
+
+  
+
+  # Histrogam of Durations
+  corrected_counts <- c(9, 24, 14, 5)
+  corrected_bins <- c("Unspecified", "0-2 months", "3-6 months", "6+ months")
+  df <- data.frame(Duration = corrected_bins, Count = corrected_counts)
+  
+  # color
+  light_colors <- c("#a6cee3", "#b2df8a", "#fdbf6f", "#cab2d6")
+  
+  # 
+  ggplot(df, aes(x = Duration, y = Count, fill = Duration)) +
+    geom_bar(stat = "identity", color = "black", width = 0.7) +
+    scale_fill_manual(values = light_colors) +
+    geom_text(aes(label = Count), vjust = -0.5, size = 4) +
+    labs(title = "Distribution of Study Durations",
+         x = "Duration Category",
+         y = "Number of Studies") +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "none",
+          plot.title = element_text(hjust = 0.5))
+  
+  
+  
+  
+  
+  #Model type of 52 studies
+  library(ggplot2)
+  library(tidyr)
+  library(dplyr)
+  
+  # data
+  df_bar <- data.frame(
+    Main = c("Mechanistic", "Scenario-based", "Statistical"),
+    Compartmental = c(18, 0, 0),
+    Agent_based = c(14, 0, 0),
+    Scenario_based = c(0, 14, 0),
+    Statistical = c(0, 0, 6)
+  )
+  
+
+  df_bar_long <- df_bar %>%
+    pivot_longer(cols = -Main, names_to = "Subtype", values_to = "Count")
+  
+  # 
+  ggplot(df_bar_long, aes(x = Main, y = Count, fill = Subtype)) +
+    geom_bar(stat = "identity") +
+    labs(title = "Stacked Bar Chart of Modelling Approaches",
+         x = NULL, y = "Number of Studies") +
+    scale_fill_manual(values = c("#fdbf6f", 	"#F0E68C", "lightblue", "pink")) +
+    theme_minimal(base_size = 14)
+  
+  
+  
+  
+  
+  # Histrogam of Health Outcomes
+  data <- c(1, 2, 2, 1, 1, 1, 4, 4, 2, 2, 3, 4, 3, 2, 2, 2, 2, 1, 2, 2,
+            1, 1, 2, 1, 4, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1, 1, 3, 2, 1,
+            1, 1, 4, 1, 1, 2, 4, 2, 1, 2, 1, 2)
+  
+  # 
+  freq_table <- table(data)
+  
+  # 
+  barplot(freq_table,
+          main = "Health outcomes",
+          xlab = "Type of Health outcomes",
+          ylab = "Number of Studies",
+          col = c("#a6cee3", "#b2df8a", "#fdbf6f", "#cab2d6"),
+          border = "black",
+          names.arg = c("Outcome on cases", 
+                        "Outcome on hospitalizations", 
+                        "Outcome on deaths", 
+                        "Health economic analysis"),
+          cex.names = 0.6,  
+          cex.lab = 1.2    
+  )
+  
